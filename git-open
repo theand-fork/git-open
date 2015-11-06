@@ -33,7 +33,9 @@ fi
 
 # get current branch
 if [ -z "$2" ]; then
-  branch=$(git symbolic-ref -q --short HEAD)
+  #branch=$(git symbolic-ref -q --short HEAD)
+  #always to master
+  branch="master"
 else
   branch="$2"
 fi
@@ -49,13 +51,22 @@ if grep -q gist.github <<<$giturl; then
   providerUrlDifference=tree
 
 # Github
-elif grep -q github <<<$giturl; then
+elif grep -q github.com <<<$giturl; then
   giturl=${giturl/git\@github\.com\:/https://github.com/}
 
   # handle SSH protocol (links like ssh://git@github.com/user/repo)
   giturl=${giturl/#ssh\:\/\/git\@github\.com\//https://github.com/}
 
   providerUrlDifference=tree
+
+# Kakao Github Ent.
+elif grep -q github.daumkakao.com <<<$giturl; then
+giturl=${giturl/git\@github\.daumkakao.com\:/https://github.daumkakao.com/}
+
+# handle SSH protocol (links like ssh://git@github.com/user/repo)
+giturl=${giturl/#ssh\:\/\/git\@github\.daumkakao.com\//https://github.daumkakao.com/}
+
+providerUrlDifference=tree
 
 # bitbucket
 elif grep -q bitbucket <<<$giturl; then
@@ -109,4 +120,3 @@ esac
 # open it in a browser
 $open "$giturl" &> /dev/null
 exit 0
-
